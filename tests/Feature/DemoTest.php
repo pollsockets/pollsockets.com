@@ -2,8 +2,7 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Sleep;
 use Inertia\Testing\AssertableInertia as Assert;
 use Pollsockets\Pollsockets;
@@ -11,8 +10,6 @@ use Tests\TestCase;
 
 class DemoTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,12 +46,12 @@ class DemoTest extends TestCase
 
     public function test_simulate_changes_the_seed_and_publishes_a_refresh_event(): void
     {
-        $seed = DB::table('faker')->value('seed');
+        Cache::forever('faker-seed', 1);
         $since = Pollsockets::now() - 1;
 
         $this->postJson('/simulate')->assertNoContent();
 
-        $this->assertNotSame($seed, DB::table('faker')->value('seed'));
+        $this->assertNotSame(1, Cache::get('faker-seed'));
 
         $this->getJson("/_pollsockets/pollsockets/poll?since={$since}")
             ->assertOk()

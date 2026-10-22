@@ -2,14 +2,14 @@
 
 namespace App\Actions;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Pollsockets\Pollsockets;
 
 class UpdateFakerSeedAction
 {
     public function __invoke(): void
     {
-        DB::table('faker')->update(['seed' => rand()]);
+        Cache::forever('faker-seed', rand());
         Pollsockets::channel('pollsockets')->publish('refresh');
     }
 }

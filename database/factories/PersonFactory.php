@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @extends Factory<Person>
@@ -18,7 +18,7 @@ class PersonFactory extends Factory
      */
     public function definition(): array
     {
-        $this->faker->seed(DB::table('faker')->value('seed'));
+        $this->faker->seed(Cache::rememberForever('faker-seed', fn () => rand()));
 
         return [
             'name' => $this->faker->unique()->name(),
