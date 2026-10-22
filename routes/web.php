@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Sleep;
 use Inertia\Inertia;
+use Laravel\Nightwatch\Http\Middleware\Sample;
 use Pollsockets\Pollsockets;
 
 Route::get('/', function () {
@@ -30,7 +31,7 @@ Route::get('/people', function (Request $request) {
         'people' => $people,
         'size' => $size,
     ];
-});
+})->middleware(Sample::rate(0.1));
 
 Route::post('/simulate', function (UpdateFakerSeedAction $action) {
     Sleep::for(1)->second();
